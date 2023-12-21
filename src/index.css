@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-size: 16px;
+  @apply bg-gray-700 text-gray-100
+  
+}
+
+h1 {
+  font-size: 2rem;
+  @apply text-red-600;
+}
+
+button {
+  @apply bg-red-400 rounded-lg m-1 p-2 hover:bg-red-300 active:bg-red-200 active:translate-x-[0.1rem] active:translate-y-[0.1rem]
+}
+
+select {
+  @apply border p-1 py-2 rounded-lg bg-slate-500 border-none
+}
+
+label {
+  @apply inline-block w-[10rem] mb-2 
+}
+
+
+input {
+  @apply bg-slate-500 text-gray-100
+}
