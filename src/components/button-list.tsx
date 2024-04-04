@@ -68,7 +68,7 @@ const [externalAudio, setExternalAudio] = useState<ExternalAudio[]>([]);
       <h1>Sounds</h1>
       <button onClick={() => {setRefreshData(!refreshData)}}>Refresh ↻</button>
       <button onClick={() => {removeSounds()}}>Stop all</button>
-      <input className={"rounded-lg p-2 ml-1 max-w-[20rem]"} placeholder="Search..." autoComplete={"off"} onChange={debouncedHandleSearch}/>
+      <input className={"rounded-lg p-2 ml-1 max-w-[20rem]"} type="search" placeholder="Search..." autoComplete={"off"} onChange={debouncedHandleSearch}/>
       {search !== "" ? (
         <p>Found {filteredSounds.length} local result{filteredSounds.length !== 1 ? "s" : ""}.</p>
       ) : null}
@@ -80,13 +80,13 @@ const [externalAudio, setExternalAudio] = useState<ExternalAudio[]>([]);
       </div>
      <br />
       {search !== "" ? (
-        <p>Found {externalAudio.length} online result{externalAudio.length !== 1 ? "s" : ""}.</p>
+        <p>Found {externalAudio.length} online result{externalAudio.length !== 1 ? "s" : ""}. {externalAudio.length > 0 ? "Right click > Save link as... to download." : ""}</p>
       ) : null}
       <div className="pt-2 flex flex-wrap"
       style={{
         gap: `${buttonGap}rem`
       }}>
-        {externalAudio.map((file) => <ExternalSound key={file.name} name={file.name} url={file.url} />)}
+        {externalAudio.map((file) => <Sound key={file.name} name={file.name} url={file.url} />)}
       </div>
     </>
   )
@@ -110,58 +110,42 @@ const colours = [
   "#9E0059",
 ];
 
-
-const Sound: FC<{url: string; name: string}> = ({url, name}) => {
-  const { previewAndBroadcastSound } = usePlayAudio();
-  const handleClick = () => previewAndBroadcastSound(url);
+const Sound: FC<{url: string, name: string, index: number}> = ({url, name, index}) => {
+  const { previewAndBroadcastSound, previewSound } = usePlayAudio();
   const { buttonSize, showEmojis, showNames } = useUserStylesContext();
   const emoji = emojis[hash(name) % emojis.length]
+  const colour = colours[hash(name) % colours.length];
 
   return (
-    <div className={"block group opacity-90 hover:-translate-y-1 hover:opacity-100 transition-all"}
+    <a href={url} onClick={(event) => {event.preventDefault()}} className={"flex text-m relative items-center rounded-md group opacity-90 hover:opacity-100 transition-all"}
     style={{
-      width: `${buttonSize}rem`,
+      width: `${buttonSize*2}rem`,
       height: `${buttonSize}rem`,
+      backgroundColor: colour
     }}>
     <button
-    className={"w-full h-full break-words"}
-    style={{
-      backgroundColor: colours[hash(name) % colours.length],
-    }}
-    key={name+url}
-    onClick={handleClick}
-    >
-    {showEmojis ? <div className={`text-3xl ${showNames ? "" : "group-hover:hidden"}`}>{emoji}<br /></div> : null}
-    <p className={`${showNames ? "block" : "hidden"} group-hover:block`}>{name.replace(/\.[^/.]+$/, "")}</p>
+      className={"m-0 w-full h-full break-words z-20 opacity-0 group-hover:opacity-100 transition-all bg-opacity-50 text-[2.5rem]/6 hover:text-[2.75rem]/6 text-slate-200 hover:text-slate-50"}
+      style={{backgroundColor: colour+"AA"}}
+      key={name+url+index}
+      onClick={() => previewAndBroadcastSound(url)}
+      >▶
     </button>
-    </div>
-  )
-}
-
-const ExternalSound: FC<{url: string, name: string}> = ({url, name}) => {
-  const { previewAndBroadcastSound } = usePlayAudio();
-  const handleClick = () => previewAndBroadcastSound(url);
-  const { buttonSize, showEmojis, showNames } = useUserStylesContext();
-  const emoji = emojis[hash(name) % emojis.length]
-
-  return (
-    <div className={"block group opacity-90 hover:-translate-y-1 hover:opacity-100 transition-all"}
-    style={{
-      width: `${buttonSize}rem`,
-      height: `${buttonSize}rem`,
-    }}>
     <button
-    className={"w-full h-full break-words"}
-    style={{
-      backgroundColor: colours[hash(name) % colours.length],
-    }}
+    className={`tooltip absolute break-words z-20 opacity-0 group-hover:opacity-100 transition-all text-[1.5rem]/8 hover:text-[1.6rem]/8`}
+    style={{backgroundColor: "#FFFFFF00"}}
     key={name+url}
-    onClick={handleClick}
-    >
-    {showEmojis ? <div className={`text-3xl ${showNames ? "" : "group-hover:hidden"}`}>{emoji}<br /></div> : null}
-    <p className={`${showNames ? "block" : "hidden"} group-hover:block`}>{name.replace(/\.[^/.]+$/, "")}</p>
+    onClick={() => previewSound(url)}
+    data-tooltip={`Preview ${name}`}
+    >🔉
     </button>
+    <div className={"-mr-10 absolute inline-flex items-center top-[50%] left-[50%] text-center"}
+    style={{
+      transform: "translate(-50%, -50%)"
+    }}>
+      {showEmojis ? <span className={`text-3xl z-10`}>{emoji}</span> : null}
+      <p className={`${showNames ? "inline" : "hidden"}`}>{name.replace(/\.[^/.]+$/, "")}</p>
     </div>
+  </a>
   )
 }
 
