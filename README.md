@@ -1,6 +1,9 @@
 # Soundboard
 ![image](https://github.com/jhodk/Soundboard/assets/7433327/0d9053ac-8a48-4ca2-89d1-72edfe7e619d)
 
+![image](https://github.com/jhodk/Soundboard/assets/7433327/0386bb3c-86d6-416b-875a-5652d56785f5)
+
+
 ## Prerequisites
 - Git https://git-scm.com/
 - nvm (node version manager) to install Node. If you don't already have Node installed you can run these commands:
